@@ -2,46 +2,46 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
-      
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  config,
+  pkgs,
+  user,
+  ...
+}:
 
-fonts.packages = with pkgs; [
-  roboto
-  nerdfonts
-  fira-code-nerdfont
-  font-awesome
-];
+{
+  fonts.packages = with pkgs; [
+    roboto
+    nerdfonts
+    fira-code-nerdfont
+    font-awesome
+  ];
 
-# Mes alias 
-programs.bash.shellAliases = { 
+  # Mes alias
+  programs.bash.shellAliases = {
     nixup = "sudo nixos-rebuild switch --upgrade";
     cleans = "sudo nix-store --gc";
     cleang = "sudo nix-collect-garbage -d";
     nixed = "sudo nano /etc/nixos/configuration.nix";
     nrb = "sudo nixos-rebuild switch";
-    };
-
-# Enable the X11 windowing system.
-#  services.xserver.enable = true;
-
-services.greetd = {
-  enable = true;
-  settings = rec {
-    initial_session = {
-      command = "Hyprland";
-      user = "chris";
-    };
-    default_session = initial_session;
   };
-};
 
-    security.rtkit.enable = true;
-    services.pipewire = {
+  # Enable the X11 windowing system.
+  #  services.xserver.enable = true;
+
+  services.greetd = {
+    enable = true;
+    settings = rec {
+      initial_session = {
+        command = "Hyprland";
+        user = "chris";
+      };
+      default_session = initial_session;
+    };
+  };
+
+  security.rtkit.enable = true;
+  services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
@@ -49,7 +49,6 @@ services.greetd = {
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
   };
-
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -65,9 +64,9 @@ services.greetd = {
   # Enable networking
   networking.networkmanager.enable = true;
 
-# Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
-  
+  # Load nvidia driver for Xorg and Wayland
+  services.xserver.videoDrivers = [ "nvidia" ];
+
   hardware.nvidia.modesetting.enable = true;
   hardware.nvidia.powerManagement.enable = true;
   hardware.nvidia.powerManagement.finegrained = false;
@@ -97,34 +96,36 @@ services.greetd = {
   console.keyMap = "fr";
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.chris = {
+  users.users.${user} = {
     isNormalUser = true;
     description = "Chris";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    packages = with pkgs; [ ];
   };
-
 
   # Enable automatic login for the user.
   services.getty.autologinUser = "chris";
 
   # hyprland
-	programs.hyprland.enable = true;
-	xdg.portal = {
-	enable = true;
-	wlr.enable = true;
-	xdgOpenUsePortal = true;
-	extraPortals = [
-	pkgs.xdg-desktop-portal-hyprland
-	pkgs.xdg-desktop-portal-gtk
-	];
-	};
+  programs.hyprland.enable = true;
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    xdgOpenUsePortal = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-hyprland
+      pkgs.xdg-desktop-portal-gtk
+    ];
+  };
 
-	# mes softs
-	programs.firefox.enable = true;
-	programs.thunar.enable = true;
-	programs.waybar.enable = true;
-	programs.file-roller.enable = true;
+  # mes softs
+  programs.firefox.enable = true;
+  programs.thunar.enable = true;
+  programs.waybar.enable = true;
+  programs.file-roller.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -132,36 +133,36 @@ services.greetd = {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-   xfce.ristretto
-   adwaita-icon-theme-legacy
-   tela-circle-icon-theme
-   webp-pixbuf-loader
-   libwebp
-   xarchiver
-   hyprpaper
-   slurp
-   alacritty
-   xfce.mousepad
-   wofi
-   util-linux
-   pciutils
-   ntfs3g
-   gimp
-   inkscape
-   libreoffice-fresh
-   dmenu-wayland
-   gvfs
-   xfce.tumbler
-   fastfetch
-   grim
-   dunst
-   networkmanagerapplet
-   pavucontrol
-   nwg-look
-   ];
+    xfce.ristretto
+    adwaita-icon-theme-legacy
+    tela-circle-icon-theme
+    webp-pixbuf-loader
+    libwebp
+    xarchiver
+    hyprpaper
+    slurp
+    alacritty
+    xfce.mousepad
+    wofi
+    util-linux
+    pciutils
+    ntfs3g
+    gimp
+    inkscape
+    libreoffice-fresh
+    dmenu-wayland
+    gvfs
+    xfce.tumbler
+    fastfetch
+    grim
+    dunst
+    networkmanagerapplet
+    pavucontrol
+    nwg-look
+  ];
 
   services.gvfs.enable = true;
-  services.tumbler.enable = true;  
+  services.tumbler.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
